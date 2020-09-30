@@ -2,19 +2,19 @@
 // Sample outputs
 //
 
-// import { calculateRoman } from "./main"
+import { StringCalculator } from "./main"
 
 
-describe('Roman-Calculator', () => {
-  it('Calculate XXII', () => {
+describe('String Calculator', () => {
+  it('NO. 1', () => {
     // given
-    const roman1 = 'XX';
-    const roman2 = 'II';
+    const input = '';
 
     // when
-    const ans = calculateRoman(roman1, roman2);
+    const strCal = new StringCalculator()
+    const ans = strCal.add(input)
 
     // then
-    expect(ans).toEqual('XXII');
+    expect(ans).toEqual(0);
   });
 });
