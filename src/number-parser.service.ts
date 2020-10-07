@@ -17,12 +17,12 @@ export class NumberParser {
         }
         
 
-        if (numberExpression.startsWith(HeaderStartSymbol)) {
+        if (this.isStartWithHeaderStartSymbol(numberExpression)) {
             const [headerInfo, numbersToExtract] = numberExpression.split(HeaderAndNumbersSeparator);
 
             const customDelimiterExpression = headerInfo.substring(HeaderStartSymbol.length);
 
-            if (customDelimiterExpression.startsWith('[')) {
+            if (this.isStartWithBracket(customDelimiterExpression)) {
                 object.delimiter = this.buildCustomDelimiterBlockPattern(customDelimiterExpression);
 
             } else {
@@ -35,6 +35,23 @@ export class NumberParser {
         const result = this.NumberExpressionReturn(object.delimiter,object.rawNumbersSegment);
         return result;
     }
+
+    private isStartWithHeaderStartSymbol(value : string):Boolean {
+        if (value.startsWith(HeaderStartSymbol)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private isStartWithBracket(value : string):Boolean {
+        if (value.startsWith('[')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     private NumberExpressionReturn(delimiter:RegExp,rawNumbersSegment:string):NumberExpressionInfo {
         const numberExpressionInfo: NumberExpressionInfo = {
