@@ -113,4 +113,16 @@ describe('String Calculator', () => {
     // then
     expect(ans).toEqual(6);
   });
+
+  it('NO. 10', () => {
+    // given
+    const input = '//[*][%]\n1*2%3';
+
+    // when
+    const strCal = new StringCalculator()
+    const ans = strCal.add(input)
+
+    // then
+    expect(ans).toEqual(6);
+  });
 });

@@ -11,8 +11,11 @@ export class NumberParser {
     }
 
     private analyzeNumberExpression(numberExpression: string): NumberExpressionInfo {
-        let delimiter: RegExp = this.buildDefaultDelimiterPattern();
-        let rawNumbersSegment = numberExpression;
+        const object = {
+         delimiter: this.buildDefaultDelimiterPattern(),
+         rawNumbersSegment : numberExpression
+        }
+        
 
         if (numberExpression.startsWith(HeaderStartSymbol)) {
             const [headerInfo, numbersToExtract] = numberExpression.split(HeaderAndNumbersSeparator);
@@ -20,20 +23,24 @@ export class NumberParser {
             const customDelimiterExpression = headerInfo.substring(HeaderStartSymbol.length);
 
             if (customDelimiterExpression.startsWith('[')) {
-                delimiter = this.buildCustomDelimiterBlockPattern(customDelimiterExpression);
+                object.delimiter = this.buildCustomDelimiterBlockPattern(customDelimiterExpression);
 
             } else {
-                delimiter = this.buildCustomDelimiterWithoutBlockPattern(customDelimiterExpression);
+                object.delimiter = this.buildCustomDelimiterWithoutBlockPattern(customDelimiterExpression);
             }
 
-            rawNumbersSegment = numbersToExtract;
+            object.rawNumbersSegment = numbersToExtract;
         }
 
+        const result = this.NumberExpressionReturn(object.delimiter,object.rawNumbersSegment);
+        return result;
+    }
+
+    private NumberExpressionReturn(delimiter:RegExp,rawNumbersSegment:string):NumberExpressionInfo {
         const numberExpressionInfo: NumberExpressionInfo = {
             delimiter,
             rawNumbersSegment
         };
-
         return numberExpressionInfo;
     }
 
@@ -49,16 +56,13 @@ export class NumberParser {
         const customDelimiterBlockPattern = /\[([^\]]+)\]/g;
         const delimiterMatches = customDelimiterExpression.match(customDelimiterBlockPattern);
 
-        let numberDelimiter;
         if (delimiterMatches) {
-            numberDelimiter = delimiterMatches
-                .map(delimiter => this.escapeDelimiterForRegex(this.unwrapDelimiter(delimiter)))
-                .join('|');
+                return new RegExp(delimiterMatches
+                    .map(delimiter => this.escapeDelimiterForRegex(this.unwrapDelimiter(delimiter)))
+                    .join('|'), 'g');
         } else {
-            numberDelimiter = this.unwrapDelimiter(customDelimiterExpression);
+            return new RegExp(this.unwrapDelimiter(customDelimiterExpression), 'g');
         }
-
-        return new RegExp(numberDelimiter, 'g');
     }
 
     private buildCustomDelimiterWithoutBlockPattern(customDelimiterExpression: string): RegExp {
